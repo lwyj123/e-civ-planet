@@ -7,16 +7,14 @@ import ImageUtils from './Image';
 import EventHandler from './EventHandler';
 import TiledLayer from './layers/TiledLayer';
 import { GoogleTiledLayer } from './layers/Google';
-import { AutonaviTiledLayer, AutonaviLabelLayer } from './layers/Autonavi';
 import LabelLayer from './layers/LabelLayer';
-import TrafficLayer from './layers/TrafficLayer';
-import Atmosphere from './graphics/Atmosphere';
 import LocationGraphic from './graphics/LocationGraphic';
 import PoiLayer from './layers/PoiLayer';
 import RouteLayer from './layers/RouteLayer';
 import Extent from './Extent';
 import Service,{Location} from './Service';
 import {WebGLRenderingContextExtension} from './Definitions.d';
+import MapPosition from '../definition/MapPosition'
 
 const initLevel:number = Utils.isMobile() ? 11 : 3;
 
@@ -39,7 +37,6 @@ export default class Globe {
   camera: Camera = null;
   tiledLayer: TiledLayer = null;
   labelLayer: LabelLayer = null;
-  trafficLayer: TrafficLayer = null;
   poiLayer: PoiLayer = null;        // 地图标识层
   routeLayer: RouteLayer = null;
   locationGraphic: LocationGraphic = null;
@@ -79,15 +76,8 @@ export default class Globe {
     this.renderer.setScene(this.scene);
     this.renderer.setCamera(this.camera);
 
-    if(this.options.satellite){
-      //not display well for level 10,11 when style is Default
-      this._setTiledLayer(new GoogleTiledLayer("Road"), this.options.pauseRendering);//"Default" | "Satellite" | "Road" | "RoadOnly" | "Terrain" | "TerrainOnly";
-    }else{
-      this._setTiledLayer(new AutonaviTiledLayer(), this.options.pauseRendering);
-    }
+    this._setTiledLayer(new GoogleTiledLayer("Road"), this.options.pauseRendering);//"Default" | "Satellite" | "Road" | "RoadOnly" | "Terrain" | "TerrainOnly";
 
-    var atmosphere = Atmosphere.getInstance();
-    this.scene.add(atmosphere);
     this.routeLayer = RouteLayer.getInstance(this.camera, this.options.key);
     this.scene.add(this.routeLayer);
     this.poiLayer = PoiLayer.getInstance();
@@ -110,14 +100,10 @@ export default class Globe {
       }
     };
 
-    Service.getCurrentPosition(false).then(locationCallback).then(() => {
-      if(Utils.isMobile()){
-        Service.getCurrentPosition(true).then(locationCallback);
-      }
-    });
+    Service.getCurrentPosition().then(locationCallback)
   }
 
-  placeAt(container: HTMLElement){
+  public placeAt(container: HTMLElement){
     if(this.canvas.parentNode){
       if(this.canvas.parentNode !== container){
         container.appendChild(this.canvas);
@@ -134,7 +120,13 @@ export default class Globe {
     Utils.publish("extent-change");
   }
 
-  private updateUserLocation(location: Location) {
+  /**
+   * 设置用户位置并在地图上居中显示。
+   * 
+   * @param {Location} location 
+   * @memberof Globe
+   */
+  public updateUserLocation(location: Location) {
     this.locationGraphic.setLonLat(location.lon, location.lat);
 
     let [lon, lat] = this.camera.getLonlat();
@@ -158,6 +150,10 @@ export default class Globe {
     }
 
     this.centerTo(lon, lat, level);
+  }
+
+  public showPositions(positions: Array<MapPosition>) {
+    this.poiLayer.showMapPositions(positions);
   }
 
   getLonlat(){
@@ -204,18 +200,6 @@ export default class Globe {
   hideLabelLayer() {
     if (this.labelLayer) {
       this.labelLayer.visible = false;
-    }
-  }
-
-  showTrafficLayer() {
-    if (this.trafficLayer) {
-      this.trafficLayer.visible = true;
-    }
-  }
-
-  hideTrafficLayer() {
-    if (this.trafficLayer) {
-      this.trafficLayer.visible = false;
     }
   }
 
@@ -335,15 +319,9 @@ export default class Globe {
 
     if(!this.isRenderingPaused()){
       var a = !!(this.labelLayer && this.labelLayer.visible);
-      var b = !!(this.trafficLayer && this.trafficLayer.visible);
-      if (a || b) {
+      if (a) {
         var lastLevelTileGrids = this.tiledLayer.getLastLevelVisibleTileGrids();
-        if (a) {
-          this.labelLayer.updateTiles(this.getLevel(), lastLevelTileGrids);
-        }
-        if (b) {
-          this.trafficLayer.updateTiles(this.getLevel(), lastLevelTileGrids);
-        }
+        this.labelLayer.updateTiles(this.getLevel(), lastLevelTileGrids);
       }
     }
   }

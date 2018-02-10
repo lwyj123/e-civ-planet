@@ -5,6 +5,8 @@ import Line from '../geometries/Line';
 import ColorMaterial from '../materials/ColorMaterial';
 import Camera from '../Camera';
 
+// GLSL 100
+// TODO: 考虑升级GLSL 300 es
 const vs = 
 `
 attribute vec3 aPosition;

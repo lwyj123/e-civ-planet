@@ -4,7 +4,6 @@ import Triangle from './Triangle';
 import Object3D from '../Object3D';
 import VertexBufferObject from '../VertexBufferObject';
 import Vertice from '../math/Vertice';
-import Ray from '../math/Ray';
 import Line from '../math/Line';
 import MathUtils from '../math/Utils';
 
@@ -13,6 +12,13 @@ interface Box{
 	radius: number;//半径，模型坐标系中的半径
 }
 
+/**
+ * 网格类，
+ * 
+ * @export
+ * @class Mesh 网格
+ * @extends {Object3D}
+ */
 export default class Mesh extends Object3D {
 	vertices: MeshVertice[] = null;
 	triangles: Triangle[] = null;
@@ -23,6 +29,17 @@ export default class Mesh extends Object3D {
 	cbo: VertexBufferObject = null;
 	box: Box = null;//local box
 
+	/**
+	 * 构建一个平面，输入4个MeshVertice，返回包含两个Triangle的数组
+	 * 
+	 * @static
+	 * @param {MeshVertice} vLeftTop 
+	 * @param {MeshVertice} vLeftBottom 
+	 * @param {MeshVertice} vRightTop 
+	 * @param {MeshVertice} vRightBottom 
+	 * @returns 
+	 * @memberof Mesh
+	 */
 	static buildPlane(vLeftTop: MeshVertice, vLeftBottom: MeshVertice, vRightTop: MeshVertice, vRightBottom: MeshVertice) {
 		/*对于一个面从外面向里面看的绘制顺序
 		 * 0      2

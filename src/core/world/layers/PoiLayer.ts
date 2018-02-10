@@ -10,6 +10,7 @@ import MeshTextureGraphic from '../graphics/MeshTextureGraphic';
 import GraphicGroup,{PickableGraphicGroup} from '../GraphicGroup';
 import MeshTextureMaterial from '../materials/MeshTextureMaterial';
 import Service, { Location, SearchType } from '../Service';
+import MapPosition from '../../definition/MapPosition'
 import Globe from '../Globe';
 import Extent from '../Extent';
 const poiImgUrl = require('../images/icons.png');
@@ -304,12 +305,12 @@ export default class PoiLayer extends PickableGraphicGroup<MeshTextureGraphic>{
     this.clearAll();
     this.keyword = keyword;
     this.searchExtentMode = false;
-    return Service.searchNearby(keyword, radius, searchType, false, pageCapacity, pageIndex).then((response: any) => {
+    return Service.searchNearby(keyword, radius, searchType, pageCapacity, pageIndex).then((response: any) => {
       this._showPois(response);
       return response;
     });
   }
-
+  
   searchByCurrentCity(keyword: string, searchType: SearchType = 'Auto', pageCapacity: number = 50, pageIndex: number = 0) {
     this.clearAll();
     this.keyword = keyword;
@@ -321,6 +322,41 @@ export default class PoiLayer extends PickableGraphicGroup<MeshTextureGraphic>{
       }
       this._showPois(response);
       return response;
+    });
+  }
+
+  showMapPositions(positions: Array<MapPosition>) {
+    this.clear();
+    let pois: Array<MapPosition> = [...positions];
+    if (pois.length === 0) {
+      return;
+    }
+
+    if(pois.length > this.MAX_POI_COUNT){
+      pois = pois.slice(0, this.MAX_POI_COUNT);
+    }
+
+    const lonlats: number[][] = pois.map((item: any) => {
+      var lon = parseFloat(item.lon);
+      var lat = parseFloat(item.lat);
+      return [lon, lat];
+    });
+
+    if (lonlats.length > 1) {
+      const extent = Extent.fromLonlats(lonlats);
+      this.globe.setExtent(extent);
+    } else {
+      const lonlat = lonlats[0];
+      // this.globe.centerTo(lonlat[0], lonlat[1]);
+    }
+
+    const resolution = this.globe.camera.getResolution();
+
+    //添加graphics
+    pois.map((item: any, index: number) => {
+      var lon = parseFloat(item.lon);
+      var lat = parseFloat(item.lat);
+      return this._addPoi(lon, lat, resolution, item, index);
     });
   }
 };

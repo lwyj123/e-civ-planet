@@ -108,6 +108,7 @@ export default class MultiPointsGraphic extends Graphic {
     //不要调用this.clear()，否则会触发调用子类的clear方法
     MultiPointsGraphic.prototype.clear.apply(this);
     this.vertices = [];
+    console.log(lonlats)
     lonlats.forEach((lonlat) => {
       var p = MathUtils.geographicToCartesianCoord(lonlat[0], lonlat[1], Kernel.EARTH_RADIUS + 0.001);
       this.vertices.push(p);

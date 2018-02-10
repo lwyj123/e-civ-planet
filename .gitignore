@@ -1,2 +1,4 @@
 /node_modules
 /buildOutput
+.DS_Store
+/lib

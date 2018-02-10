@@ -205,7 +205,7 @@ export default class Nav extends RouteComponent {
     }
 
     mockPoiByCurrentLocation(){
-        return Service.getCurrentPosition(false).then((location) => {
+        return Service.getCurrentPosition().then((location) => {
             return {
                 pointx: location.lon,
                 pointy: location.lat,

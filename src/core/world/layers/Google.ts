@@ -59,7 +59,8 @@ export class GoogleTiledLayer extends TiledLayer{
         break;
     }
 
-    var url:string = `//mt${this.idx}.google.cn/maps/vt?lyrs=${lyrs}&hl=zh-CN&gl=CN&&x=${column}&y=${row}&z=${level}`;
+    // var url:string = `//mt${this.idx}.google.cn/maps/vt?lyrs=${lyrs}&hl=zh-CN&gl=CN&&x=${column}&y=${row}&z=${level}`;
+    var url:string = `//planet.lwio.me/ibin/${level}/${column}/${row}.png`;
 
     this.idx++;
 

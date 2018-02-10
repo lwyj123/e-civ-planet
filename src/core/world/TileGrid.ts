@@ -109,7 +109,7 @@ class TileGrid {
         return new TileGrid(level, row, column);
     }
 
-    //返回切片在直接付切片中的位置
+    //返回切片在直接父切片中的位置
     static getTilePositionOfParent(level: number, row: number, column: number, parent?: TileGrid): any {
         var position:TileGridPosition = null;
         parent = parent || this.getTileGridAncestor(level - 1, level, row, column);

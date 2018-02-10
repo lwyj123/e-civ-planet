@@ -11,26 +11,6 @@ var extractPlugin = new ExtractTextWebpackPlugin("[name].[contenthash].css");
 var WebpackMd5Hash = require('webpack-md5-hash');
 var webpackMd5HashPlugin = new WebpackMd5Hash();
 
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-//https://github.com/jantimon/html-webpack-plugin/issues/133
-var indexHtmlWebpackPlugin = new HtmlWebpackPlugin({
-    filename: './index.html',
-    template: '!!html!./src/core/template.html',
-    hash: false,
-    inject: 'body',
-    // chunks: ["runtime", "globe", "index"]
-    chunks: ["index"]
-});
-
-var webappHtmlWebpackPlugin = new HtmlWebpackPlugin({
-    filename: './webapp.html',
-    template: '!!ejs!./src/webapp/template.html',
-    hash: false,
-    inject: 'body',
-    // chunks: ["runtime", "webapp", "globe"]
-    chunks: ["webapp"]
-});
-
 // var commonsChunkPlugin = new webpack.optimize.CommonsChunkPlugin({
 //     // name: "globe",
 //     // chunks: ["globe"]
@@ -45,14 +25,12 @@ var es6Promise = "./node_modules/es6-promise/dist/es6-promise.auto.min.js";
 
 module.exports = {
     entry: {
-        // globe: "./src/core/world/Globe.ts",
-        index: [es6Promise, "./src/core/index.ts"],
-        webapp: [es6Promise, "./src/webapp/index.jsx"]
+        globe: "./src/core/world/Globe.ts",
     },
 
     output: {
-        path: path.resolve(__dirname, buildFolder),
-        filename: "[name].[chunkhash].js",
+        path: path.resolve(__dirname, 'lib'),
+        filename: "[name].js",
         // publicPath: buildFolder + "/",
         library: 'e-civ-planet',
         libraryTarget: 'umd',
@@ -67,7 +45,6 @@ module.exports = {
         alias: {
             core: path.resolve(__dirname, "./src/core"),
             world: path.resolve(__dirname, "./src/core/world"),
-            webapp: path.resolve(__dirname, "./src/webapp")
         }
     },
 
@@ -106,8 +83,6 @@ module.exports = {
         // commonsChunkPlugin,
         extractPlugin,
         webpackMd5HashPlugin,
-        indexHtmlWebpackPlugin,
-        webappHtmlWebpackPlugin
     ]
 };
 
@@ -136,16 +111,16 @@ if (process.argv.indexOf("--ci") >= 0) {
     );
 }
 
-if (PRODUCTION) {
-    module.exports.plugins.push(
-        //add DefinePlugin for production to save 88KB for React build
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: JSON.stringify('production')
-            }
-        }),
-        new webpack.optimize.UglifyJsPlugin({
-            sourceMap: false
-        })
-    );
-}
+// if (PRODUCTION) {
+//     module.exports.plugins.push(
+//         //add DefinePlugin for production to save 88KB for React build
+//         new webpack.DefinePlugin({
+//             'process.env': {
+//                 NODE_ENV: JSON.stringify('production')
+//             }
+//         }),
+//         new webpack.optimize.UglifyJsPlugin({
+//             sourceMap: false
+//         })
+//     );
+// }

@@ -100,37 +100,37 @@ class Service {
     });
     return p;
   }
-
-  static getCurrentPosition(highAccuracy: boolean = false) {
+  /**
+   * 获取当前位置，会调用API
+   */
+  static getCurrentPosition() {
     const p = new Promise((resolve: AnyCallbackType) => {
       this.getCityLocation().then((cityLocation: Location) => {
-        if (highAccuracy) {
-          navigator.geolocation.getCurrentPosition((response: Position) => {
-            const location = {
-              lon: response.coords.longitude,
-              lat: response.coords.latitude,
-              accuracy: response.coords.accuracy,
-              city: cityLocation.city
-            } as Location;
-            this.location = location;
-            resolve(this.location);
-          }, (err) => {
-            console.error(err);
-            if (this.location) {
-              resolve(this.location);
-            } else {
-              resolve(cityLocation);
-            }
-          }, {
-              enableHighAccuracy: true
-            });
-        } else {
-          if (this.location) {
-            resolve(this.location);
-          } else {
-            resolve(cityLocation);
-          }
-        }
+        const location = {
+          lon: 0,
+          lat: 0,
+          accuracy: 1,
+          city: ''
+        } as Location
+        this.location = location
+        resolve(this.location)
+        // navigator.geolocation.getCurrentPosition((response: Position) => {
+        //   const location = {
+        //     lon: response.coords.longitude,
+        //     lat: response.coords.latitude,
+        //     accuracy: response.coords.accuracy,
+        //     city: cityLocation.city
+        //   } as Location;
+        //   this.location = location;
+        //   resolve(this.location);
+        // }, (err) => {
+        //   console.error(err);
+        //   if (this.location) {
+        //     resolve(this.location);
+        //   } else {
+        //     resolve(cityLocation);
+        //   }
+        // });
       });
     });
     return p;
@@ -329,8 +329,8 @@ class Service {
     return p;
   }
 
-  static searchNearby(keyword: string, radius: number, searchType: SearchType = 'Auto', highAccuracy: boolean = false, pageCapacity: number = 50, pageIndex: number = 0) {
-    return this.getCurrentPosition(highAccuracy).then((location: Location) => {
+  static searchNearby(keyword: string, radius: number, searchType: SearchType = 'Auto', pageCapacity: number = 50, pageIndex: number = 0) {
+    return this.getCurrentPosition().then((location: Location) => {
       return this.searchByBuffer(keyword, location.lon, location.lat, radius, searchType, pageCapacity, pageIndex);
     });
   }

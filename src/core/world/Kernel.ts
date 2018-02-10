@@ -10,7 +10,7 @@ const MAX_RESOLUTION = MAX_REAL_RESOLUTION * SCALE_FACTOR;
 export default class Kernel{
     static gl: WebGLRenderingContextExtension = null;
     static idCounter: number = 0;
-    static readonly version: string = "0.6.1";
+    static readonly version: string = "0.0.1";
     static readonly SCALE_FACTOR: number = SCALE_FACTOR;
     static readonly REAL_EARTH_RADIUS: number = REAL_EARTH_RADIUS;
     static readonly EARTH_RADIUS: number = EARTH_RADIUS;
@@ -18,7 +18,7 @@ export default class Kernel{
     static readonly MAX_REAL_RESOLUTION: number = MAX_REAL_RESOLUTION;
     static readonly MAX_PROJECTED_COORD: number = MAX_PROJECTED_COORD;
     static readonly BASE_LEVEL: number = 6; //渲染的基准层级，从该层级开始segment为1
-    static readonly MAX_LEVEL: number = 18;
+    static readonly MAX_LEVEL: number = 16;
     static readonly MIN_LEVEL: number = 2;
     static readonly MIN_PITCH_LEVEL: number = 8;
     static readonly proxy: string = "";

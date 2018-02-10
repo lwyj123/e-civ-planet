@@ -8,7 +8,7 @@ import './index.scss';
 (function () {
     var options = new GlobeOptions();
     options.satellite = true;
-    options.level = 11;
+    options.level = 2;
     options.lonlat = 'auto';
     var globe = Globe.getInstance(options);
     globe.placeAt(document.body);
@@ -18,6 +18,13 @@ import './index.scss';
     function resize(){
         globe.resize(window.innerWidth, window.innerHeight);
     }
+
+    setTimeout(() => {
+        globe.poiLayer.setPickListener((target) => {
+            alert("click poi");
+            console.log(target)
+        })
+    }, 3000)
 
     window.addEventListener("resize", resize, false);
 
